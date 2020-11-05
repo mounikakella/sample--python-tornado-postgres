@@ -1,10 +1,10 @@
 from tornado.web import Application
 from tornado.ioloop import IOLoop
-from services import TodoItems
+from routes import TodoItemsRoute
 
 
 def make_app():
-    urls = [("/", TodoItems)]
+    urls = [("/", TodoItemsRoute)]
     return Application(urls)
 
 
