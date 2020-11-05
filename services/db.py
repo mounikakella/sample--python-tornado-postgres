@@ -2,7 +2,7 @@ import psycopg2
 import psycopg2.extras
 
 
-class Db:
+class Dbservice:
     def __init__(self):
         self.conn = psycopg2.connect(
             database="postgres", user="postgres", password="postgres", host="localhost", port=5432)
