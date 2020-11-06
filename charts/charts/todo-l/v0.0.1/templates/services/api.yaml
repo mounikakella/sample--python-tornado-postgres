@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "todo-list-api.fullname" . }}-api
+  labels:
+    app: {{ template "todo-list-api.name" . }}-api
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  {{- if .Values.ingress.api.enabled }}
+  type: ClusterIP
+  {{- else }}
+  type: {{ .Values.service.api.type }}
+  {{- if (eq .Values.service.api.type "NodePort") }}
+  externalTrafficPolicy: {{ .Values.service.api.externalTrafficPolicy }}
+  {{- end }}
+  {{- end }}
+  ports:
+    - name: http
+      port: {{ (eq .Values.service.api.type "LoadBalancer") | ternary .Values.service.api.lbPorts.http "80" }}
+      targetPort: container
+      {{- if (and (eq .Values.service.api.type "NodePort") (not (empty .Values.service.api.nodePorts.http))) }}
+      nodePort: {{ .Values.service.api.nodePorts.http }}
+      {{- end }}
+  selector:
+    app: {{ template "todo-list-api.name" . }}-api
+    release: {{ .Release.Name }}

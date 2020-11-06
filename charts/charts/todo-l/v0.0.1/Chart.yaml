@@ -1,0 +1,15 @@
+apiVersion: v1
+name: todo-list-api
+home: https://github.com/mounikakella/sample--python-tornado-postgres
+icon: https://www.tornadoweb.org/en/stable/_images/tornado.png
+version: 0.0.1
+type: application
+appVersion: latest
+description: 'Sample python, tornado and postgres'
+keywords:
+  - todo-list-api
+sources:
+  - https://github.com/mounikakella/sample--python-tornado-postgres
+maintainers:
+  - name: 'mounika'
+    email: mounika.nueve@gmail.com

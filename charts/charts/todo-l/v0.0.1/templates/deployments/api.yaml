@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "todo-list-api.fullname" . }}-api
+  labels:
+    app: {{ template "todo-list-api.name" . }}-api
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "todo-list-api.name" . }}-api
+      release: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.config.updateStrategy }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "todo-list-api.name" . }}-api
+        release: {{ .Release.Name }}
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 89
+              preference:
+                matchExpressions:
+                  - key: application/state
+                    operator: In
+                    values:
+                      - stateless
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 90
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - {{ template "todo-list-api.name" . }}-api
+      containers:
+        - name: {{ template "todo-list-api.fullname" . }}-api
+          image: {{ .Values.images.api.repository }}:{{ .Values.images.api.tag }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
+          resources:
+            requests:
+              cpu: {{ .Values.config.api.resources.requests.cpu }}
+              memory: {{ .Values.config.api.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.config.api.resources.limits.cpu }}
+              memory: {{ .Values.config.api.resources.limits.memory }}
+          ports:
+            - name: container
+              containerPort: 3000
+          env: []
+          livenessProbe:
+            httpGet:
+              path: /
+              port: container
+{{ toYaml .Values.probes.liveness | indent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: container
+{{ toYaml .Values.probes.readiness | indent 12 }}

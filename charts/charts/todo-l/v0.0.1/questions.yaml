@@ -1,0 +1,211 @@
+categories:
+  - Server
+questions:
+
+# Config
+  - variable: config.clusterProvider
+    default: infrastructure
+    description: ''
+    type: enum
+    options:
+      - infrastructure
+      - eks
+      - aks
+      - gke
+    required: true
+    label: 'cluster provider'
+    group: Config
+  - variable: config.imagePullPolicy
+    default: Always
+    description: ''
+    type: enum
+    options:
+      - Always
+      - IfNotPresent
+    required: true
+    label: 'pull policy'
+    group: Config
+  - variable: config.updateStrategy
+    default: Recreate
+    description: ''
+    type: enum
+    options:
+      - Recreate
+      - RollingUpdate
+      - OnDelete
+    required: true
+    label: 'update strategy'
+    group: Config
+  - variable: config.api.resources.defaults
+    default: true
+    description: ''
+    type: boolean
+    required: true
+    label: 'api resources defaults'
+    show_subquestion_if: false
+    group: Config
+    subquestions:
+      - variable: config.api.resources.requests.cpu
+        default: 100m
+        description: ''
+        type: string
+        required: true
+        label: 'api resources requests cpu'
+      - variable: config.api.resources.requests.memory
+        default: 128Mi
+        description: ''
+        type: string
+        required: true
+        label: 'api resources requests memory'
+      - variable: config.api.resources.limits.cpu
+        default: 500m
+        description: ''
+        type: string
+        required: true
+        label: 'api resources limits cpu'
+      - variable: config.api.resources.limits.memory
+        default: 256Mi
+        description: ''
+        type: string
+        required: true
+        label: 'api resources limits memory'
+
+# Postgres Config
+  - variable: config.postgres.host
+    default: ''
+    description: ''
+    type: string
+    required: false
+    label: host
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+  - variable: config.postgres.database
+    default: todo_list_api
+    description: ''
+    type: string
+    required: true
+    label: database
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+  - variable: config.postgres.password
+    default: P@ssw0rd
+    description: ''
+    type: password
+    required: true
+    label: password
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+  - variable: config.postgres.port
+    default: 5432
+    description: ''
+    type: int
+    min: 0
+    max: 65535
+    required: true
+    label: port
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+  - variable: config.postgres.url
+    default: ''
+    description: ''
+    type: string
+    required: false
+    label: url
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+  - variable: config.postgres.username
+    default: postgres
+    description: ''
+    type: string
+    required: true
+    label: username
+    show_if: config.postgres.internal=false
+    group: 'Postgres Config'
+
+# Services and Load Balancing
+  - variable: ingress.api.enabled
+    default: true
+    description: ''
+    type: boolean
+    label: 'api ingress enabled'
+    show_subquestion_if: true
+    group: 'Services and Load Balancing'
+    subquestions:
+      - variable: ingress.api.tls
+        default: false
+        description: ''
+        type: boolean
+        required: true
+        label: 'api ingress tls'
+      - variable: ingress.api.hostname
+        default: xip.io
+        description: ''
+        type: hostname
+        required: true
+        label: 'api ingress hostname'
+      - variable: ingress.api.issuer.name
+        default: letsencrypt-staging
+        description: ''
+        type: enum
+        show_if: ingress.api.tls=true
+        options:
+          - none
+          - letsencrypt-staging
+          - letsencrypt-prod
+        required: true
+        label: 'api ingress issuer name'
+      - variable: ingress.api.certificate
+        default: ''
+        description: ''
+        type: string
+        show_if: ingress.api.tls=true&&ingress.api.issuer.name=none
+        required: false
+        label: 'api ingress certificate'
+  - variable: service.api.type
+    default: NodePort
+    description: ''
+    type: enum
+    show_if: ingress.api.enabled=false
+    options:
+      - ClusterIP
+      - NodePort
+      - LoadBalancer
+    required: true
+    label: 'api service type'
+    group: 'Services and Load Balancing'
+  - variable: service.api.nodePorts.http
+    default:
+    description: ''
+    type: int
+    required: false
+    min: 30000
+    max: 32767
+    show_if: service.api.type=NodePort&&ingress.api.enabled=false
+    label: 'api http node port'
+    group: 'Services and Load Balancing'
+  - variable: service.api.lbPorts.http
+    default: 80
+    description: ''
+    type: int
+    min: 0
+    max: 65535
+    required: true
+    show_if: service.api.type=LoadBalancer&&ingress.api.enabled=false
+    label: 'api http lb port'
+    group: 'Services and Load Balancing'
+
+# Images
+  - variable: images.api.repository
+    default: mounika999/todo-list-api
+    description: ''
+    type: string
+    required: true
+    label: 'api repository'
+    group: Images
+  - variable: images.api.tag
+    default: latest
+    description: ''
+    type: string
+    required: true
+    label: 'api tag'
+    group: Images
