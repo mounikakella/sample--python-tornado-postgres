@@ -3,7 +3,7 @@ import psycopg2.extras
 import os
 
 
-class db:
+class Db:
     def __init__(self):
         self.conn = psycopg2.connect(
             database=os.environ.get('DATABASE'), user=os.environ.get('USER'), password=os.environ.get('PASSWORD'), host=os.environ.get('HOST'), port=os.environ.get('PORT')

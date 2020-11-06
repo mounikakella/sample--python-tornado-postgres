@@ -1,10 +1,11 @@
 from tornado.web import Application
 from tornado.ioloop import IOLoop
 from services import TodoItems
+from db import Db
 
 
 def make_app():
-    urls = [("/", TodoItems)]
+    urls = [("/", TodoItems, dict(db_instance=Db))]
     return Application(urls)
 
 

@@ -1,13 +1,19 @@
 from tornado.web import RequestHandler
 import json
 # import db
-from db import db
+from db import Db
 
 
 class TodoItems(RequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.db_instance = db()
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.db_instance = db()
+    #     self.dbconn = self.db_instance.conn
+    #     self.dbcursor = self.db_instance.cursor
+    def initialize(self, db_instance):
+        print(dir(db_instance))
+        self.db_instance = Db()
+        print(dir(self.db_instance))
         self.dbconn = self.db_instance.conn
         self.dbcursor = self.db_instance.cursor
 
