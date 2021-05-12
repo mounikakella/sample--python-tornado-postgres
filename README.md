@@ -6,8 +6,10 @@ docker run -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -e
 ```
 ```
 pipenv install
+export HOST=localhost   
+export PORT=5432
 export DATABASE=postgres     
 export USER=postgres    
-export PORT=5432        
+export PASSWORD=postgres
 pipenv run python app.py
 ```
