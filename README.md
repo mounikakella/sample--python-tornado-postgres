@@ -13,3 +13,4 @@ export USER=postgres
 export PASSWORD=postgres
 pipenv run python app.py
 ```
+Visit localhost:3000
